@@ -3,7 +3,6 @@ package main
 import (
 	"encoding/json"
 	"fmt"
-	"io/ioutil"
 	"log"
 	"net/http"
 
@@ -11,7 +10,6 @@ import (
 	"github.com/PrayagS/kv-store/pkg/kvstore"
 	gorillaHandlers "github.com/gorilla/handlers"
 	"github.com/gorilla/mux"
-	kafkaGo "github.com/segmentio/kafka-go"
 )
 
 type RequestMessage struct {
@@ -23,25 +21,25 @@ type ResponseMessage struct {
 	Value string `json:"Value"`
 }
 
-func producerHandler(kafkaWriter *kafkaGo.Writer) http.HandlerFunc {
-	return func(wrt http.ResponseWriter, req *http.Request) {
-		body, err := ioutil.ReadAll(req.Body)
-		if err != nil {
-			log.Fatalln(err)
-		}
-		// msg := kafka.Message{
-		// 	Key:   []byte(fmt.Sprintf("address-%s", req.RemoteAddr)),
-		// 	Value: body,
-		// }
-		// err = kafkaWriter.WriteMessages(req.Context(), msg)
-		err = kafka.AppendCommandLog(req.Context(), kafkaWriter, []byte(fmt.Sprintf("address-%s", req.RemoteAddr)), body)
+// func producerHandler(kafkaWriter *kafkaGo.Writer) http.HandlerFunc {
+// 	return func(wrt http.ResponseWriter, req *http.Request) {
+// 		body, err := ioutil.ReadAll(req.Body)
+// 		if err != nil {
+// 			log.Fatalln(err)
+// 		}
+// 		// msg := kafka.Message{
+// 		// 	Key:   []byte(fmt.Sprintf("address-%s", req.RemoteAddr)),
+// 		// 	Value: body,
+// 		// }
+// 		// err = kafkaWriter.WriteMessages(req.Context(), msg)
+// 		err = kafka.AppendCommandLog(req.Context(), kafkaWriter, []byte(fmt.Sprintf("address-%s", req.RemoteAddr)), body)
 
-		if err != nil {
-			_, _ = wrt.Write([]byte(err.Error()))
-			log.Fatalln(err)
-		}
-	}
-}
+// 		if err != nil {
+// 			_, _ = wrt.Write([]byte(err.Error()))
+// 			log.Fatalln(err)
+// 		}
+// 	}
+// }
 
 func getValue(kvstore *kvstore.KVStore) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
@@ -65,7 +63,7 @@ func getValue(kvstore *kvstore.KVStore) http.HandlerFunc {
 
 		w.WriteHeader(http.StatusOK)
 		w.Header().Set("Content-Type", "application/json")
-		json.NewEncoder(w).Encode(res)
+		_ = json.NewEncoder(w).Encode(res)
 	}
 }
 
