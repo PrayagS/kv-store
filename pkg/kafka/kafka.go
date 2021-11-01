@@ -30,6 +30,7 @@ func GetKafkaReader() *kafka.Reader {
 
 func AppendCommandLog(ctx context.Context, kafkaWriter *kafka.Writer, k []byte, v []byte) error {
 	msg := kafka.Message{
+		// Topic: kafkaTopic,
 		Key:   k,
 		Value: v,
 	}

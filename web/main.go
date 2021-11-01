@@ -10,6 +10,7 @@ import (
 	"github.com/PrayagS/kv-store/pkg/kvstore"
 	gorillaHandlers "github.com/gorilla/handlers"
 	"github.com/gorilla/mux"
+	kafkaGo "github.com/segmentio/kafka-go"
 )
 
 type RequestMessage struct {
@@ -19,6 +20,30 @@ type RequestMessage struct {
 type ResponseMessage struct {
 	Key   string `json:"Key"`
 	Value string `json:"Value"`
+}
+
+func setValue(kvstore *kvstore.KVStore, kafkaWriter *kafkaGo.Writer) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		var req ResponseMessage
+		err := json.NewDecoder(r.Body).Decode(&req)
+		defer r.Body.Close()
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusBadRequest)
+			return
+		}
+
+		err = kafka.AppendCommandLog(r.Context(), kafkaWriter, []byte(fmt.Sprintf("address-%s", r.RemoteAddr)), []byte(req.Key+" "+req.Value))
+		if err != nil {
+			_, _ = w.Write([]byte(err.Error()))
+			log.Fatalln(err)
+		}
+
+		kvstore.Set(req.Key, req.Value)
+
+		w.WriteHeader(http.StatusOK)
+		w.Header().Set("Content-Type", "application/json")
+		_ = json.NewEncoder(w).Encode("SUCCESS")
+	}
 }
 
 // func producerHandler(kafkaWriter *kafkaGo.Writer) http.HandlerFunc {
@@ -81,6 +106,7 @@ func main() {
 
 	r := mux.NewRouter()
 	r.Path("/get").Handler(getValue(&s))
+	r.Path("/set").Handler(setValue(&s, kafkaWriter))
 
 	// Run the web server.
 	fmt.Println("start producer-api ... !!")
