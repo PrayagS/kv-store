@@ -1,16 +1,27 @@
 package main
 
 import (
+	"encoding/json"
 	"fmt"
 	"io/ioutil"
 	"log"
 	"net/http"
 
 	"github.com/PrayagS/kv-store/pkg/kafka"
+	"github.com/PrayagS/kv-store/pkg/kvstore"
 	gorillaHandlers "github.com/gorilla/handlers"
 	"github.com/gorilla/mux"
 	kafkaGo "github.com/segmentio/kafka-go"
 )
+
+type RequestMessage struct {
+	Key string `json:"Key"`
+}
+
+type ResponseMessage struct {
+	Key   string `json:"Key"`
+	Value string `json:"Value"`
+}
 
 func producerHandler(kafkaWriter *kafkaGo.Writer) http.HandlerFunc {
 	return func(wrt http.ResponseWriter, req *http.Request) {
@@ -32,13 +43,46 @@ func producerHandler(kafkaWriter *kafkaGo.Writer) http.HandlerFunc {
 	}
 }
 
+func getValue(kvstore *kvstore.KVStore) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		var req RequestMessage
+		err := json.NewDecoder(r.Body).Decode(&req)
+		defer r.Body.Close()
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusBadRequest)
+			return
+		}
+
+		v, ok := kvstore.Get(req.Key)
+		if ok != nil {
+			http.Error(w, "The given key is not present in the data store.", http.StatusInternalServerError)
+			return
+		}
+
+		var res ResponseMessage
+		res.Key = req.Key
+		res.Value = v
+
+		w.WriteHeader(http.StatusOK)
+		w.Header().Set("Content-Type", "application/json")
+		json.NewEncoder(w).Encode(res)
+	}
+}
+
 func main() {
+
+	s := kvstore.New()
+	s.Set("lmao", "420")
+	s.Set("nice", "69")
 
 	kafkaWriter := kafka.GetKafkaWriter()
 	defer kafkaWriter.Close()
 
+	kafkaReader := kafka.GetKafkaReader()
+	defer kafkaReader.Close()
+
 	r := mux.NewRouter()
-	r.Path("/").Handler(producerHandler(kafkaWriter))
+	r.Path("/get").Handler(getValue(&s))
 
 	// Run the web server.
 	fmt.Println("start producer-api ... !!")
