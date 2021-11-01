@@ -26,7 +26,7 @@ func producerHandler(kafkaWriter *kafkaGo.Writer) http.HandlerFunc {
 		err = kafka.AppendCommandLog(req.Context(), kafkaWriter, []byte(fmt.Sprintf("address-%s", req.RemoteAddr)), body)
 
 		if err != nil {
-			wrt.Write([]byte(err.Error()))
+			_, _ = wrt.Write([]byte(err.Error()))
 			log.Fatalln(err)
 		}
 	}
