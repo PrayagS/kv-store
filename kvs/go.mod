@@ -1,4 +1,4 @@
-module github.com/PrayagS/kv-store/cli
+module github.com/PrayagS/kv-store/kvs
 
 go 1.17
 

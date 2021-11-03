@@ -15,7 +15,7 @@ limitations under the License.
 */
 package main
 
-import "github.com/PrayagS/kv-store/cli/cmd"
+import "github.com/PrayagS/kv-store/kvs/cmd"
 
 func main() {
 	cmd.Execute()
