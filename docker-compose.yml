@@ -1,13 +1,19 @@
 version: '3.8'
+
 services:
   zookeeper:
     image: wurstmeister/zookeeper
     ports:
       - "2181:2181"
+    environment:
+      ZOOKEEPER_CLIENT_PORT: "2181"
+
   kafka:
     image: wurstmeister/kafka
     ports:
       - "9092:9092"
+    depends_on:
+      - zookeeper
     expose:
       - "9093"
     environment:
