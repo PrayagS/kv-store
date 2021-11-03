@@ -30,7 +30,7 @@ var key string
 
 // rootCmd represents the base command when called without any subcommands
 var rootCmd = &cobra.Command{
-	Use:   "kv-store",
+	Use:   "kvs-cli",
 	Short: "CLI client for a server-side key value store with subscription feature",
 	Long: `This is a CLI client to the KV-storage server.
 	You can perform the following operations,
