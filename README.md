@@ -41,7 +41,7 @@ Going with [spf13/cobra](https://github.com/spf13/cobra) is an easy choice when 
 
 For the GET and SET operations, the CLI just sends the appropriate HTTP requests and for the watch operation, it opens a WebSocket connection and keeps it alive until either the user terminates it or the server is unresponsive.
 
-The code can be found in `/cli`.
+The code can be found in `/kvs-cli`.
 
 ## Running
 
