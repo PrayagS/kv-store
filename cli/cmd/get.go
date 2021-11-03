@@ -16,23 +16,75 @@ limitations under the License.
 package cmd
 
 import (
+	"bytes"
+	"encoding/json"
 	"fmt"
+	"io/ioutil"
+	"log"
+	"net/http"
 
 	"github.com/spf13/cobra"
 )
 
+type GetValuePOSTRequest struct {
+	Key string
+}
+
+// var key string
+var isAll bool
+
+func PrettyString(str string) (string, error) {
+	var prettyJSON bytes.Buffer
+	if err := json.Indent(&prettyJSON, []byte(str), "", "    "); err != nil {
+		return "", err
+	}
+	return prettyJSON.String(), nil
+}
+
 // getCmd represents the get command
 var getCmd = &cobra.Command{
 	Use:   "get",
-	Short: "A brief description of your command",
-	Long: `A longer description that spans multiple lines and likely contains examples
-and usage of using your command. For example:
-
-Cobra is a CLI library for Go that empowers applications.
-This application is a tool to generate the needed files
-to quickly create a Cobra application.`,
+	Short: "Performs the get operation and returns the value for the given key.",
+	Long:  `TODO: Longer description of GET`,
 	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println("get called")
+		if key == "" || isAll {
+			request, err := http.Get("http://" + serverAddress + "/getall")
+			if err != nil {
+				log.Fatalf("Error contacting server: %v", err)
+			}
+			defer request.Body.Close()
+			body, err := ioutil.ReadAll(request.Body)
+			if err != nil {
+				log.Fatalf("Error reading server response: %v", err)
+			}
+			prettyJSON, err := PrettyString(string(body))
+			if err != nil {
+				log.Fatal(err)
+			}
+			fmt.Println(prettyJSON)
+		} else {
+			payload := GetValuePOSTRequest{
+				Key: key,
+			}
+			p, err := json.Marshal(payload)
+			if err != nil {
+				log.Fatalf("Invalid key input. Error: %v", err)
+			}
+			request, err := http.Post("http://"+serverAddress+"/get", "application/json", bytes.NewBuffer(p))
+			if err != nil {
+				log.Fatalf("Error contacting server: %v", err)
+			}
+			defer request.Body.Close()
+			body, err := ioutil.ReadAll(request.Body)
+			if err != nil {
+				log.Fatalf("Error reading server response: %v", err)
+			}
+			prettyJSON, err := PrettyString(string(body))
+			if err != nil {
+				log.Fatal(err)
+			}
+			fmt.Println(prettyJSON)
+		}
 	},
 }
 
@@ -48,4 +100,6 @@ func init() {
 	// Cobra supports local flags which will only run when this command
 	// is called directly, e.g.:
 	// getCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
+	getCmd.Flags().StringVarP(&key, "key", "k", "", "The key to search for in the key-value store.")
+	getCmd.Flags().BoolVarP(&isAll, "all", "a", false, "Set to true to fetch all keys")
 }

@@ -16,23 +16,48 @@ limitations under the License.
 package cmd
 
 import (
+	"bytes"
+	"encoding/json"
 	"fmt"
+	"io/ioutil"
+	"log"
+	"net/http"
 
 	"github.com/spf13/cobra"
 )
 
+type SetValuePOSTRequest struct {
+	Key   string
+	Value string
+}
+
+// var key string
+var value string
+
 // setCmd represents the set command
 var setCmd = &cobra.Command{
 	Use:   "set",
-	Short: "A brief description of your command",
-	Long: `A longer description that spans multiple lines and likely contains examples
-and usage of using your command. For example:
-
-Cobra is a CLI library for Go that empowers applications.
-This application is a tool to generate the needed files
-to quickly create a Cobra application.`,
+	Short: "Performs the set operation and set the value for the given key.",
+	Long:  `TODO: Longer description of SET`,
 	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println("set called")
+		payload := SetValuePOSTRequest{
+			Key:   key,
+			Value: value,
+		}
+		p, err := json.Marshal(payload)
+		if err != nil {
+			fmt.Println("Invalid key input")
+		}
+		request, err := http.Post("http://"+serverAddress+"/set", "application/json", bytes.NewBuffer(p))
+		if err != nil {
+			log.Fatalf("An Error Occured %v", err)
+		}
+		defer request.Body.Close()
+		body, err := ioutil.ReadAll(request.Body)
+		if err != nil {
+			log.Fatalln(err)
+		}
+		fmt.Println(string(body))
 	},
 }
 
@@ -48,4 +73,8 @@ func init() {
 	// Cobra supports local flags which will only run when this command
 	// is called directly, e.g.:
 	// setCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
+	setCmd.Flags().StringVarP(&key, "key", "k", "", "The key to search for in the key-value store.")
+	setCmd.Flags().StringVarP(&value, "value", "v", "", "The value to set for the given key.")
+	_ = setCmd.MarkFlagRequired("key")
+	_ = setCmd.MarkFlagRequired("value")
 }

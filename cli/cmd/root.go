@@ -25,20 +25,23 @@ import (
 )
 
 var cfgFile string
+var serverAddress string
+var key string
 
 // rootCmd represents the base command when called without any subcommands
 var rootCmd = &cobra.Command{
-	Use:   "cli",
-	Short: "A brief description of your application",
-	Long: `A longer description that spans multiple lines and likely contains
-examples and usage of using your application. For example:
-
-Cobra is a CLI library for Go that empowers applications.
-This application is a tool to generate the needed files
-to quickly create a Cobra application.`,
+	Use:   "kv-store",
+	Short: "CLI client for a server-side key value store with subscription feature",
+	Long:  `TODO: Longer description of CLI client`,
 	// Uncomment the following line if your bare application
 	// has an action associated with it:
-	// Run: func(cmd *cobra.Command, args []string) { },
+	// Run: func(cmd *cobra.Command, args []string) {
+	// 	if connected {
+	// 		fmt.Printf("You are connected to key value store running at %s", serverAddress)
+	// 	} else {
+	// 		fmt.Printf("Please connect to the key value store server.\n")
+	// 	}
+	// },
 }
 
 // Execute adds all child commands to the root command and sets flags appropriately.
@@ -54,11 +57,13 @@ func init() {
 	// Cobra supports persistent flags, which, if defined here,
 	// will be global for your application.
 
-	rootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "config file (default is $HOME/.cli.yaml)")
+	rootCmd.PersistentFlags().StringVar(&serverAddress, "server-address", "0.0.0.0:23333", "The address of the key-value datastore")
+	// _ = rootCmd.MarkPersistentFlagRequired("server-address")
+	// rootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "config file (default is $HOME/.cli.yaml)")
 
 	// Cobra also supports local flags, which will only run
 	// when this action is called directly.
-	rootCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
+	// rootCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
 }
 
 // initConfig reads in config file and ENV variables if set.
