@@ -38,7 +38,10 @@ var value string
 var setCmd = &cobra.Command{
 	Use:   "set",
 	Short: "Performs the set operation and set the value for the given key.",
-	Long:  `TODO: Longer description of SET`,
+	Long: `Perform a SET operation.
+	When no flag is passed, all key-value pairs are fetched.
+	Given a key-value pair, the concerned key-value pair is either added or updated if already exists.
+	`,
 	Run: func(cmd *cobra.Command, args []string) {
 		payload := SetValuePOSTRequest{
 			Key:   key,
@@ -64,15 +67,6 @@ var setCmd = &cobra.Command{
 func init() {
 	rootCmd.AddCommand(setCmd)
 
-	// Here you will define your flags and configuration settings.
-
-	// Cobra supports Persistent Flags which will work for this command
-	// and all subcommands, e.g.:
-	// setCmd.PersistentFlags().String("foo", "", "A help for foo")
-
-	// Cobra supports local flags which will only run when this command
-	// is called directly, e.g.:
-	// setCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
 	setCmd.Flags().StringVarP(&key, "key", "k", "", "The key to search for in the key-value store.")
 	setCmd.Flags().StringVarP(&value, "value", "v", "", "The value to set for the given key.")
 	_ = setCmd.MarkFlagRequired("key")

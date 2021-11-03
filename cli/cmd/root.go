@@ -32,16 +32,13 @@ var key string
 var rootCmd = &cobra.Command{
 	Use:   "kv-store",
 	Short: "CLI client for a server-side key value store with subscription feature",
-	Long:  `TODO: Longer description of CLI client`,
-	// Uncomment the following line if your bare application
-	// has an action associated with it:
-	// Run: func(cmd *cobra.Command, args []string) {
-	// 	if connected {
-	// 		fmt.Printf("You are connected to key value store running at %s", serverAddress)
-	// 	} else {
-	// 		fmt.Printf("Please connect to the key value store server.\n")
-	// 	}
-	// },
+	Long: `This is a CLI client to the KV-storage server.
+	You can perform the following operations,
+	GET all key-value pairs:      kvs --server-address <address> get --all
+	GET a given key-value pair:   kvs --server-address <address> get --key <key>
+	SET a given key-value pair:   kvs --server-address <address> set --key <key> --value <value>
+	Watch the server for changes: kvs --server-address <address> watch
+	`,
 }
 
 // Execute adds all child commands to the root command and sets flags appropriately.
@@ -53,17 +50,7 @@ func Execute() {
 func init() {
 	cobra.OnInitialize(initConfig)
 
-	// Here you will define your flags and configuration settings.
-	// Cobra supports persistent flags, which, if defined here,
-	// will be global for your application.
-
 	rootCmd.PersistentFlags().StringVar(&serverAddress, "server-address", "0.0.0.0:23333", "The address of the key-value datastore")
-	// _ = rootCmd.MarkPersistentFlagRequired("server-address")
-	// rootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "config file (default is $HOME/.cli.yaml)")
-
-	// Cobra also supports local flags, which will only run
-	// when this action is called directly.
-	// rootCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
 }
 
 // initConfig reads in config file and ENV variables if set.

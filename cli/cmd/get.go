@@ -45,7 +45,10 @@ func PrettyString(str string) (string, error) {
 var getCmd = &cobra.Command{
 	Use:   "get",
 	Short: "Performs the get operation and returns the value for the given key.",
-	Long:  `TODO: Longer description of GET`,
+	Long: `Perform a GET operation.
+	When no flag is passed, all key-value pairs are fetched.
+	Given a key, only the concerned key-value pair is fetched.
+	`,
 	Run: func(cmd *cobra.Command, args []string) {
 		if key == "" || isAll {
 			request, err := http.Get("http://" + serverAddress + "/getall")
@@ -91,15 +94,6 @@ var getCmd = &cobra.Command{
 func init() {
 	rootCmd.AddCommand(getCmd)
 
-	// Here you will define your flags and configuration settings.
-
-	// Cobra supports Persistent Flags which will work for this command
-	// and all subcommands, e.g.:
-	// getCmd.PersistentFlags().String("foo", "", "A help for foo")
-
-	// Cobra supports local flags which will only run when this command
-	// is called directly, e.g.:
-	// getCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
 	getCmd.Flags().StringVarP(&key, "key", "k", "", "The key to search for in the key-value store.")
 	getCmd.Flags().BoolVarP(&isAll, "all", "a", false, "Set to true to fetch all keys")
 }

@@ -50,7 +50,9 @@ func receiveHandler(connection *websocket.Conn) {
 var watchCmd = &cobra.Command{
 	Use:   "watch",
 	Short: "Watch the changes happening to all keys in the store",
-	Long:  `TODO: Longer description of watch`,
+	Long: `Watch the server for changes done by other clients.
+	The client's address and the edited key-value pair is shown in JSON as received.
+	`,
 	Run: func(cmd *cobra.Command, args []string) {
 		signal.Notify(interrupt, os.Interrupt) // Notify the interrupt channel for SIGINT
 
