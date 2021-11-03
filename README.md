@@ -9,6 +9,10 @@ This project can be divided into three major steps:
 - Setup a real-time connection with client to send live changes.
 - Build a CLI client that consumes the web service and facilitates the required operations.
 
+## Architecture
+
+![](img/architecture.png)
+
 ### The core key-value store
 
 At its core, the KV store is just a `map[interface{}]interface{}` that is being maintained by the server. There are various handlers that allow the user to interact with this `map` object. The web server was implemented using [gorilla/mux](https://github.com/gorilla/mux) and [gorilla/handlers](https://github.com/gorilla/handlers).
@@ -70,7 +74,7 @@ curl 0.0.0.0:23333/getall
 ```
 
 To install the CLI client,
-```sh 
+```sh
 go install github.com/PrayagS/kv-store/kvs-cli@latest
 ```
 
