@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"log"
 	"net/http"
 
@@ -31,7 +30,6 @@ func main() {
 	r.Path("/subscribe").Handler(handlers.Subscribe(&s, kafkaReader))
 
 	// Run the web server.
-	fmt.Println("start producer-api ... !!")
 	// Apply the CORS middleware to our top-level router, with the defaults.
 	log.Fatal(http.ListenAndServe("0.0.0.0:23333", gorillaHandlers.CORS()(r)))
 }
