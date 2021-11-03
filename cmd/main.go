@@ -12,28 +12,11 @@ import (
 	"github.com/gorilla/mux"
 )
 
-type RequestMessage struct {
-	Key string `json:"Key"`
-}
-
-type ResponseMessage struct {
-	Key   string `json:"Key"`
-	Value string `json:"Value"`
-}
-
-type KafkaRecord struct {
-	Topic     string
-	Partition int
-	Offset    int
-	Key       string
-	Value     string
-}
-
 func main() {
 
 	s := kvstore.New()
-	s.Set("lmao", "420")
-	s.Set("nice", "69")
+	s.Set("Name", "Prayag Savsani")
+	s.Set("Age", "20")
 
 	kafkaWriter := kafka.GetKafkaWriter()
 	defer kafkaWriter.Close()
