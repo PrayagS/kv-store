@@ -106,3 +106,11 @@ cd kv-store/cli
 go mod download
 go build -o kvs ./kvs.go
 ```
+
+## References
+
+- https://github.com/segmentio/kafka-go/tree/main/examples
+- https://github.com/gorilla/websocket/tree/master/examples
+- https://github.com/wurstmeister/kafka-docker
+- https://github.com/conduktor/kafka-stack-docker-compose
+- https://cobra.dev/
