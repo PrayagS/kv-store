@@ -8,7 +8,7 @@ import (
 
 const (
 	kafkaTopic = "command-log"
-	kafkaURL   = "172.17.0.1:9092"
+	kafkaURL   = "localhost:9092"
 )
 
 func GetKafkaWriter() *kafka.Writer {
