@@ -69,6 +69,26 @@ curl 0.0.0.0:23333/get -d '{"Key": "Name"}'
 curl 0.0.0.0:23333/getall
 ```
 
+To install the CLI client,
+```sh 
+go install github.com/PrayagS/kv-store/kvs-cli@latest
+```
+
+Once installed, use the CLI as follows,
+```sh
+# GET all keys
+kvs-cli --server-address 0.0.0.0:23333 get --all
+
+# GET a given key-value pair
+kvs-cli --server-address 0.0.0.0:23333 get --key "Name"
+
+# SET a given key-value pair
+kvs-cli --server-address 0.0.0.0:23333 set --key "City" --value "Bangalore"
+
+# Watch changes
+kvs-cli --server-address 0.0.0.0:23333 watch
+```
+
 ## Building
 
 The server can be built as follows,
