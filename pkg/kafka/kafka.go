@@ -2,7 +2,6 @@ package kafka
 
 import (
 	"context"
-	"strings"
 
 	"github.com/segmentio/kafka-go"
 )
@@ -21,10 +20,10 @@ func GetKafkaWriter() *kafka.Writer {
 }
 
 func GetKafkaReader() *kafka.Reader {
-	brokers := strings.Split(kafkaURL, ",")
 	return kafka.NewReader(kafka.ReaderConfig{
-		Brokers: brokers,
-		Topic:   kafkaTopic,
+		Brokers:   []string{kafkaURL},
+		Topic:     kafkaTopic,
+		Partition: 0,
 	})
 }
 
